@@ -1,0 +1,27 @@
+---
+name: Design Systems
+route: /use-cases/design-systems
+menu: Use-cases
+---
+
+## Use-case: Adopting Existing Design Systems
+
+Your company have a Design System with its own UI-kit (like [Shopify Polaris](https://polaris.shopify.com/))?
+
+Then, it makes even more sense and is easier to use `Frontier forms`!
+
+```
+import gql from 'graphql-tag';
+import { Frontier } from 'frontier-forms';
+import { CompanyUIKit } from 'your-uikit';
+
+const mutation = gql`
+    mutation update_user(user: UserInputType!) {
+        ...User
+    }
+`;
+
+<Frontier mutation={mutation} uikit={CompanyUIKit} />
+```
+
+*// TODO*

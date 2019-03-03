@@ -1,0 +1,35 @@
+---
+name: React
+route: /getting-started/react
+menu: Getting started
+---
+
+
+## Getting started with React
+
+### Installation
+
+```
+$ yarn add frontier-forms-react
+```
+
+### Usage
+
+```
+import gql from 'graphql-tag';
+import { Frontier } from 'frontier-forms';
+
+const mutation = gql`
+    mutation update_user(user: UserInputType!) {
+        ...User
+    }
+`;
+
+const constraints = gql`
+  type UserInputTypeConstraints {
+    username: String! @constraint(minLength: 5, format: "email")
+  }
+`
+
+<Frontier mutation={mutation} constraints={constraints} />
+```
