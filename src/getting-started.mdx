@@ -1,0 +1,143 @@
+---
+name: Getting started
+route: /getting-started
+---
+
+# Getting Started
+
+
+This page will guide you on how to use Frontier through CodeSandbox examples.
+
+In order to install Frontier on your application, please look at ["Installation" page](/installation).
+
+Let's build a "Create user" form.
+
+## Set up the GraphQL part
+
+### The GraphQL mutation
+
+```
+const mutation = gql`
+  mutation(
+    $company: String!
+    $email: String!
+    $firstname: String!
+    $lastname: String!
+  ) {
+    createUser(
+      company: $company
+      email: $email
+      firstname: $firstname
+      lastname: $lastname
+    ) {
+      id
+    }
+  }
+`;
+```
+
+This mutation aim to "Create a user" with 4 `String` mandatory arguments.
+
+### The Apollo Client
+
+```
+const client = new ApolloClient({
+  link: createHttpLink({
+    uri: "<YOUR_GRAPHQL_API_URL>"
+  }),
+  cache: new InMemoryCache()
+});
+```
+
+<br />
+<br />
+
+## Set up your Form UI
+
+<div dangerouslySetInnerHTML={{ __html: '<iframe src="https://codesandbox.io/embed/5vj2x94wyk?fontsize=14&hidenavigation=1&module=%2Fsrc%2Findex.tsx&moduleview=1&view=editor" title="Frontier docs - demo" style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe>' }}/>
+
+As explained in the [API documentation](/api/frontier-component), render props gets:
+- `state` argument for get access to the state: `values`, `errors` and other properties (`dirty`, ...)
+- `modifiers` arguments to update the state or trigger a `save`: `change`, `focus`, etc ...
+
+<br />
+<br />
+
+**This gives us the following form UI:**
+
+<div dangerouslySetInnerHTML={{ __html: '<iframe src="https://codesandbox.io/embed/5vj2x94wyk?fontsize=14&hidenavigation=1&module=%2Fsrc%2Findex.tsx&moduleview=1&view=preview" title="Frontier docs - demo" style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe>' }}/>
+
+*(Saving data is disabled for demo purpose.)*
+
+<br />
+
+As explained in ["What is Frontier"](/what-is-frontier), by just providing a `GraphQL mutation` and an `Apollo Client`, Frontier brings you the full data lifecycle management.
+
+Required fields are known by default, state and error management is handled for you.
+
+More, calling `modifiers.save()` will deal with saving the data using the provided `Apollo Client`.
+
+<br />
+
+For more information about render props arguments, please look at the [`<Frontier>` API documentation](/api/frontier-component).
+
+<br />
+<br />
+
+
+## Customise your Form
+
+Let's know improve our "Create user" form experience by adding some advanced data validations.
+
+Our email field needs some email format validation.
+
+
+### Add validations
+
+This is configurable using the `formats=` props:
+
+```
+
+<Frontier
+  formats={{ email: "email" }}
+  client={client}
+  mutation={mutation}
+>
+/* ... */
+</Frontier>
+
+```
+
+Here, we indicate that the `email` field should have an `email` format.
+
+*(See [`<Frontier>` API documentation](/api/frontier-component) for formats provided by Frontier)*
+
+<br />
+
+### Define your custom validation format
+
+The default `email` format provided by Frontier only check for the presence of a `"@"`.
+
+Let's improve the format by providing our own rule for the `email` format using the `addFormat` function exposed by Frontier.
+
+```
+import { addFormat } from "frontier-forms";
+
+/* ... */
+
+addFormat("email", /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i);
+
+```
+
+<br />
+<br />
+
+## Going further with UI-Kit
+
+You now know how to build a simple form with Frontier.
+
+However, you might notice that the code in the render props is quite repetitive.
+
+Using `Frontier UI-Kit` feature will allow you to bring nicer forms with smarter code.
+
+Want to get the best out of Frontier? Head to ["Frontier UI-Kit"](/frontier-ui-kit)!
