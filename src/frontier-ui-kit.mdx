@@ -5,12 +5,67 @@ route: /frontier-ui-kit
 
 # Frontier UI-Kit
 
-The UI-Kit feature of Frontier will allow you to bring consistent experience across all your forms to your users, with minimal effort.
+The Frontier UI-Kit allows you to define the *look and feel* of your forms and use in all your application, with minimal effort.
+
+This is a great opportunity to bring a cohesive experience to your users across all the forms of your application.
+
+<br />
 
 ## Choose your rendering mode
 
+If render props are provided, `<Frontier>` will set-up the [`kit` render props argument](#kit-render-props-argument) using the provided UI Kit.
+
+If no render props are provided, `<Frontier>` will render the form using the *full rendering*  feature.
+
+<br />
+<br />
+
 ### Full-rendering
+
+Just providing an `uiKit=` props to `<Frontier>` will trigger a *full rendering* from Frontier.
+
+`<Frontier>` will call the provided `UIKitAPI.form()` in order to wrap all the fields.
+
+Then, for each field of the mutation, it will apply the following process:
+
+Example, for a field "email" of type `String`:
+
+1. Frontier will first try to get a registred `path()` component for "email"
+2. Then, Frontier will try to get a registred `type()` component for the type `String`
+3. Finally, Frontier will fallback to the `Unknown component`
+
+<br />
+
+Here is an example of UI-KIT *full rendering*:
+
+<div dangerouslySetInnerHTML={{ __html: '<iframe src="https://codesandbox.io/embed/react-europe-2019-frontier-p1wnq?fontsize=14&module=%2Fsrc%2Fdemos%2FuserUIKit.tsx&view=editor" title="Frontier docs - demo UI-Kit" style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe>' }}/>
+
+That leads to the following form:
+
+<div dangerouslySetInnerHTML={{ __html: '<iframe src="https://codesandbox.io/embed/react-europe-2019-frontier-p1wnq?fontsize=14&module=%2Fsrc%2Fdemos%2FuserUIKit.tsx&view=preview" title="Frontier docs - demo UI-Kit" style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe>' }}/>
+
+<br />
+
+**Note**: you can change the order of fields by providing the [`order=` props](/api/frontier-component#order-string-props) to `<Frontier>`.
+
+<br />
+<br />
 
 ### Render-props
 
+Frontier UI-kit is also compatible with render-props.
+
+By using the [`kit` render props argument](#kit-render-props-argument), you have the full control on the final rendering.
+
+<br />
+
+Here is an example of UI-KIT *with render-props*:
+
+<div dangerouslySetInnerHTML={{ __html: '<iframe src="https://codesandbox.io/embed/react-europe-2019-frontier-p1wnq?fontsize=14&module=%2Fsrc%2Fdemos%2FuserUIKit-with-render-props.tsx&view=editor" title="Frontier docs - demo UI-Kit" style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe>' }}/>
+
+
 ## Build your application UI-Kit
+
+As the seen above, using Frontier UI-Kit is intuitive and easy.
+
+In order to create your own, please read the ["Frontier UI-Kit API"](api/frontier-ui-kit) documentation.
