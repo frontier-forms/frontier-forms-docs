@@ -3,3 +3,436 @@ name: <Frontier>
 route: /api/frontier-component
 menu: API
 ---
+
+# &lt;Frontier&gt; component
+
+
+## Tables of contents
+
+<ul class="css-2ngb9d">
+    <li><a href="#props" class="css-jn0lzx"><code class="css-1er7839">&lt;Frontier&gt;</code> props</a>
+        <ul class="css-2ngb9d" style={ { paddingLeft: '25px' } }>
+            <li><a href="#client-apolloclientany-props" class="css-jn0lzx"><code class="css-1er7839">client</code></a></li>
+            <li><a href="#mutation-documentnode-props" class="css-jn0lzx"><code class="css-1er7839">mutation</code></a></li>
+            {/* <li><a href="#schema-props" class="css-jn0lzx"><code class="css-1er7839">schema</code></a></li> */}
+            <li><a href="#formats-object-props" class="css-jn0lzx"><code class="css-1er7839">formats</code></a></li>
+            <li><a href="#initialvalues-object-props" class="css-jn0lzx"><code class="css-1er7839">initialValues</code></a></li>
+            <li><a href="#order-string-props" class="css-jn0lzx"><code class="css-1er7839">order</code></a></li>
+            <li><a href="#resetonsave-boolean-props" class="css-jn0lzx"><code class="css-1er7839">resetOnSave</code></a></li>
+            <li><a href="#uikit-uikitapi-props" class="css-jn0lzx"><code class="css-1er7839">uiKit</code></a></li>
+        </ul>
+    </li>
+    <li><a href="#render-props" class="css-jn0lzx"><code class="css-1er7839">&lt;Frontier&gt;</code> render props</a>
+        <ul class="css-2ngb9d" style={ { paddingLeft: '25px' } }>
+            <li><a href="#form-render-props-argument" class="css-jn0lzx"><code class="css-1er7839">form</code> argument</a></li>
+            <li><a href="#state-render-props-argument" class="css-jn0lzx"><code class="css-1er7839">state</code> argument</a></li>
+            <li><a href="#modifiers-render-props-argument" class="css-jn0lzx"><code class="css-1er7839">modifiers</code></a></li>
+            <li><a href="#kit-render-props-argument" class="css-jn0lzx"><code class="css-1er7839">kit</code> argument</a></li>
+        </ul>
+    </li>
+    <li><a href="#helpers" class="css-jn0lzx">Helpers</a>
+      <ul class="css-2ngb9d" style={ { paddingLeft: '25px' } }>
+        <li><a href="#add-format" class="css-jn0lzx"><code class="css-1er7839">addFormat</code></a></li>
+      </ul>
+    </li>
+</ul>
+
+
+## &lt;Frontier&gt; props
+
+
+### `client: ApolloClient<any>` props
+
+`client` should be a valid `ApolloClient` instance, as shown below:
+
+```
+const client = new ApolloClient({
+  link: createHttpLink({
+    uri: "<YOUR_GRAPHQL_API_URL>"
+  }),
+  cache: new InMemoryCache()
+});
+```
+
+<br />
+
+### `mutation: DocumentNode` props
+
+`mutation` should be a `DocumentNode` built with `gql` (`graphql-tag`), as shown below:
+
+```
+const mutation = gql`
+  mutation(
+    $company: String!
+    $email: String!
+    $firstname: String!
+    $lastname: String!
+  ) {
+    createUser(
+      company: $company
+      email: $email
+      firstname: $firstname
+      lastname: $lastname
+    ) {
+      id
+    }
+  }
+`;
+```
+
+<!-- ### `schema: JSONSchema7` props -->
+
+<br />
+
+### `formats?: object` props
+
+`formats` should be a valid `object` with "field.path" as key and format name as value.
+
+Example with the following mutation:
+
+```
+const mutation = gql`
+  mutation(
+    $company: String!
+    $email: String!
+    $firstname: String!
+    $lastname: String!
+  ) {
+    createUser(
+      company: $company
+      email: $email
+      firstname: $firstname
+      lastname: $lastname
+    ) {
+      id
+    }
+  }
+`;
+```
+
+We apply the "email" format to the `email` field:
+
+```
+<Frontier
+  formats={{ email: "email" }}
+  client={client}
+  mutation={mutation}
+>
+/* ... */
+</Frontier>
+```
+
+The [following formats](https://github.com/epoberezkin/ajv#formats) are supported:
+
+- _time_ : time with optional time-zone.
+- _date-time_ : date-time from the same source (time-zone is mandatory).
+- _uri_ : full URI.
+- _uri-reference_ : URI reference, including full and relative URIs.
+- _uri-template_ : URI template according to [RFC6570](https://tools.ietf.org/html/rfc6570)
+- _email_ : email address.
+- _hostname_ : host name according to [RFC1034](http://tools.ietf.org/html/rfc1034#section-3.5).
+- _ipv4_ : IP address v4.
+- _ipv6_ : IP address v6.
+- _regex_ : tests whether a string is a valid regular expression by passing it to RegExp constructor.
+- _uuid_ : Universally Unique IDentifier according to [RFC4122](http://tools.ietf.org/html/rfc4122).
+
+<br />
+
+In order to define your own format, please look at [`addFormat`](#add-format) function.
+
+<br />
+
+### `initialValues?: object` props
+
+`initialValues` should be a valid `object` matching the mutation provided fields.
+
+**Example with simple fields**
+
+```
+const mutation = gql`
+  mutation(
+    $company: String!
+    $email: String!
+    $firstname: String!
+    $lastname: String!
+  ) {
+    createUser(
+      company: $company
+      email: $email
+      firstname: $firstname
+      lastname: $lastname
+    ) {
+      id
+    }
+  }
+`;
+```
+
+
+```
+<Frontier
+  initialValues={{ email: "email@google.com" }}
+  client={client}
+  mutation={mutation}
+>
+/* ... */
+</Frontier>
+```
+
+**Example with nested fields**
+
+```
+const mutation = gql`
+  mutation($user: UserInputType!) {
+    createUser(user: $user) {
+      id
+    }
+  }
+`;
+```
+
+with the given `UserInputType` type:
+
+```
+input UserInputType {
+  email: String!
+  firstname: String!
+  lastname: String!
+}
+```
+
+
+```
+<Frontier
+  initialValues={{ user: { email: "email@google.com" } }}
+  client={client}
+  mutation={mutation}
+>
+/* ... */
+</Frontier>
+```
+
+<br />
+
+### `order?: string[]` props
+
+Only applicable when using *UI-Kit full rendering*  feature, `order` allows to change the ordering of field rendering.
+
+**Example**
+
+```
+const mutation = gql`
+  mutation(
+    $company: String!
+    $email: String!
+    $firstname: String!
+    $lastname: String!
+  ) {
+    createUser(
+      company: $company
+      email: $email
+      firstname: $firstname
+      lastname: $lastname
+    ) {
+      id
+    }
+  }
+`;
+```
+
+We want `email` and `company` fields first:
+
+```
+<Frontier
+  client={client}
+  mutation={mutation}
+  uiKit={myApplicationKit}
+  order=['email', 'company']
+/>
+```
+
+
+
+<br />
+
+### `resetOnSave?: boolean` props
+
+Default at `false`.
+
+When set at `true`, reset the form state after save.
+
+<br />
+
+### `uiKit?: UIKitAPI` props
+
+If render props are provided, Frontier will set-up the [`kit` render props argument](#kit-render-props-argument) using the provided UI Kit.
+
+If no render props are provided, Frontier will render the form using the *full rendering*  feature.
+
+<br />
+
+Looking for how to create a `UIKitAPI` object? Please head to the ["Frontier UI-Kit API documentation"](/api/frontier-ui-kit).
+
+<br />
+
+
+## &lt;Frontier&gt; render props
+
+### `form` render props argument
+
+The `form` argument give you access direct access to the form state management API provided by [`final-form`](https://github.com/final-form/final-form).
+
+Please see [`final-form`](https://github.com/final-form/final-form) documentation for all available methods: https://github.com/final-form/final-form#formapi
+
+<br />
+
+### `state` render props argument
+
+`state` contains the state of each field by following the structure of the given mutation.
+
+Each field has the following properties, [inherited from `final-form`](https://github.com/final-form/final-form#fieldstate):
+
+- `active?: boolean`
+- `data?: Object`
+- `dirty?: boolean`
+- `dirtySinceLastSubmit?: boolean`
+- `error?: any`
+- `initial?: any`
+- `invalid?: boolean`
+- `length?: number`
+- `modified?: boolean`
+- `name: string`
+- `pristine?: boolean`
+- `submitError?: any`
+- `submitFailed?: boolean`
+- `submitSucceeded?: boolean`
+- `submitting?: boolean`
+- `touched?: boolean`
+- `valid?: boolean`
+- `value?: any`
+- `visited?: boolean`
+
+<br />
+
+**Example**
+
+```
+{ state.user.email.value }
+```
+
+<br />
+
+### `modifiers` render props argument
+
+**`modifiers.save()`**
+
+Calling this method will try to save the data using the provided `client=` `<Frontier>` props *(if the data is valid)* .
+
+<br />
+
+**Fields methods**
+
+`modifiers` provide functions of each field in a dedicated property:
+
+- `change(eventOrValue: React.SyntheticEvent | any) => void`
+- `focus() => void`
+- `blur() => void`
+
+<br />
+
+**Example**
+
+```
+{ state.user.email.change() }
+```
+
+<br />
+
+**Note**
+
+`change()` can either take a field value or an Event.
+
+<br />
+<br />
+
+
+### `kit` render props argument
+
+`kit` provide the React component of each field by following the structure of the given mutation.
+
+**Example**
+
+With the following mutation:
+
+```
+const mutation = gql`
+  mutation(
+    $company: String!
+    $email: String!
+    $firstname: String!
+    $lastname: String!
+  ) {
+    createUser(
+      company: $company
+      email: $email
+      firstname: $firstname
+      lastname: $lastname
+    ) {
+      id
+    }
+  }
+`;
+```
+
+We can render the `company` field:
+
+```
+{ kit.company() }
+```
+
+<br />
+
+**Note**
+
+`kit` methods can take an optional `props` parameter that will be merged with the defined component props.
+
+```
+{ kit.company({ placeholder: 'Google, Facebook, ...' }) }
+```
+
+<br />
+<br />
+
+## Helpers
+
+### `addFormat(formatName: string, validator: ajv.FormatValidator)`
+
+
+`addFormat` is a global method that allows you to create a custom *validation format*.
+
+
+```
+import { addFormat } from "frontier-forms";
+
+/* ... */
+
+addFormat("email", /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i);
+
+/* ... */
+
+<Frontier
+  formats={{ email: "email" }}
+  client={client}
+  mutation={mutation}
+>
+/* ... */
+</Frontier>
+
+
+```
+
+**Note:** `addFormat()` should be called before using `<Frontier>` component.
+
+<br />
+
+See `ajv` documentation for supported `validator` type: https://github.com/epoberezkin/ajv#api-addformat.

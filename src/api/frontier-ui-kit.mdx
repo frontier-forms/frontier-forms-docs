@@ -4,15 +4,84 @@ route: /api/frontier-ui-kit
 menu: API
 ---
 
-## API: Form modifiers
+# Frontier UI-Kit API
 
-> How to update the state of your form
+```
+import { UIKit, UIKitAPI } from "frontier-forms";
 
+const myKit: UIKitAPI = UIKit().
+  .form((form, children) => (
+    /* ... */
+  ))
+  .type("string", (path, required, children) => {
+    return props => {
+      /* ... */
+    };
+  })
+  .path(/rating/ as any, (path, type, required) => {
+    return props => {
+      /* ... */
+    };
+  })
+  .path('createUser.email', (path, type, required) => {
+    return props => {
+      /* ... */
+    };
+  });
+```
 
-- `setPristine(pristine: boolean): boolean`
-- `setDirty(dirty: boolean): boolean`
-- `setValid(valid: boolean): boolean`
-- `setEnabled(enabled: boolean): boolean`
-- `setTouched(touched: boolean): boolean`
-- `setSaved(saved: boolean): boolean`
-- `setData(data: any)`
+## Introduction
+
+When receiving a `uiKit=` props, `<Frontier>` will call the provided `UIKitAPI.form()` in order to wrap all the fields.
+
+Then, for each field, everytime a render is necessary, it will apply the following process:
+
+Example, for a field "email" of type `String`:
+
+1. Frontier will first try to get a registred `path()` component for "email"
+2. Then, Frontier will try to get a registred `type()` component for the type `String`
+3. Finally, Frontier will fallback to the `Unknown component`
+
+## `form()`
+
+`form(f: (form: FormApi, children?: ReactNode) => ReactNode)`
+
+Allows you to define a `ReactNode` that will wrap all the fields (received in `children` argument).
+
+The `form` argument allows you to react at the form state (example: `form.getState().submitting`).
+
+## `path()`
+
+```
+path(
+  path: string | RegExp,
+  f: (path: string, type: JSONSchema7TypeName, required: boolean) => ComponentType<UIKITFieldProps>
+)
+```
+
+Allows you to define a `React Component` strictly matching (with a `string`) or partially matching (`RegExp`) a field path.
+
+The provided function (`f`) should return a valid `React Component` that will receive the field state as props (see ["Frontier component API"](/api/frontier-component)).
+
+## `type()`
+
+```
+ type(
+   type: "string" | "number" | "boolean" | "object" | "integer" | "array" | "null",
+   f: (path: string, required: boolean) => ComponentType<UIKITFieldProps>
+  )
+```
+
+Allows you to define a `React Component` strictly matching a field type.
+
+The provided function (`f`) should return a valid `React Component` that will receive the field state as props (see ["Frontier component API"](/api/frontier-component)).
+
+## `unknown()`
+
+`unknown(f: (path: string, type: JSONSchema7TypeName) => ComponentType<UIKITFieldProps>)`
+
+Frontier already define a default *"unknown component"* that render `null` and warn in the console.
+
+`unknown()` allows you to define the fallback component.
+
+Also useful to match all types (expect the defined ones).
