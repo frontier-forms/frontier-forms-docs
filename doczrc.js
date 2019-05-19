@@ -1,6 +1,7 @@
 module.exports = {
   title: 'Frontier forms',
   typescript: true,
+  description: 'The smartest web-forms',
   menu: [
     'Frontier forms',
     'What is Frontier',
