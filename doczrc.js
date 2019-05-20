@@ -10,4 +10,5 @@ module.exports = {
     'Frontier UI-Kit',
     { name: 'API', menu: ['<Frontier>', 'Frontier UI-Kit'] }
   ],
+  indexHtml: 'src/index.html',
 }
